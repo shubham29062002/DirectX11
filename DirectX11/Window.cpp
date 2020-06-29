@@ -99,7 +99,7 @@ std::optional<int> Window::ProcessMessages()
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
-	return {};
+	return  {};
 }
 
 LRESULT CALLBACK Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
