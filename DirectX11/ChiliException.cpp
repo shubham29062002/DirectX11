@@ -32,6 +32,7 @@ const std::string& ChiliException::GetFile() const noexcept
 std::string ChiliException::GetOriginString() const noexcept
 {
 	std::ostringstream oss;
-	oss << " [File] " << file << std::endl << " [Line] " << line;
+	oss << " [File] " << file << std::endl 
+		<< " [Line] " << line;
 	return oss.str();
 }
