@@ -4,35 +4,13 @@
 #include <d3dcompiler.h>
 #include <cmath>
 #include <DirectXMath.h>
+#include "GraphicsThrowMacros.h"
 
 namespace wrl = Microsoft::WRL;
 namespace dx = DirectX;
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "D3DCompiler.lib")
-
-#define GFX_EXCEPT_NOINFO(hr) \
-Graphics::HrException(__LINE__,__FILE__,hr)
-#define GFX_THROW_NOINFO(hrcall) if (FAILED(hr = hrcall)) \
-throw Graphics::HrException(__LINE__,__FILE__,hr)
-
-#ifndef NDEBUG
-#define GFX_EXCEPT(hr) \
-Graphics::HrException(__LINE__,__FILE__,hr,infoManager.GetMessages())
-#define GFX_THROW_INFO(hrcall) infoManager.Set(); \
-if(FAILED(hr = hrcall)) throw GFX_EXCEPT(hr)
-#define GFX_DEVICE_REMOVED_EXCEPT(hr) \
-Graphics::DeviceRemovedException(__LINE__,__FILE__,hr,infoManager.GetMessages())
-#define GFX_THROW_INFO_ONLY(call) infoManager.Set(); (call); \
-{auto v = infoManager.GetMessages(); if(!v.empty()) \
-{throw Graphics::InfoException(__LINE__,__FILE__,v);}}
-
-#else
-#define GFX_EXCEPT(hr) Graphics::HrException(__LINE__,__FILE__,hr)
-#define GFX_THROW_INFO(hrcall) GFX_THROW_NOINFO(hrcall)
-#define GFX_DEVICE_REMOVED_EXCEPT(hr) Graphics::DeviceRemovedException(__LINE__,__FILE__,hr)
-#define GFX_THROW_INFO_ONLY(call) (call)
-#endif
 
 Graphics::Graphics(HWND hWnd)
 {
@@ -207,6 +185,8 @@ void Graphics::DrawTestTriangle()
 
 	pContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
 
+	pContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 	struct ConstantBuffer
 	{
 		dx::XMMATRIX transform;
@@ -223,7 +203,7 @@ void Graphics::DrawTestTriangle()
 			)
 		}
 	};
-	angle += 0.05;
+	angle += 0.05f;
 	wrl::ComPtr<ID3D11Buffer> pConstantBuffer;
 	D3D11_BUFFER_DESC cbd = { 0 };
 	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -293,16 +273,6 @@ void Graphics::DrawTestTriangle()
 	));
 	pContext->IASetInputLayout(pInputLayout.Get());
 
-	wrl::ComPtr<ID3D11PixelShader> pPixelShader;
-	GFX_THROW_INFO(D3DReadFileToBlob(L"PixelShader.cso", &pBlob));
-	GFX_THROW_INFO(pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(),nullptr,&pPixelShader));
-
-	pContext->PSSetShader(pPixelShader.Get(), nullptr, 0u);
-
-	pContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), nullptr);
-
 	D3D11_VIEWPORT vp = { 0 };
 	vp.Width = 640;
 	vp.Height = 480;
@@ -311,6 +281,14 @@ void Graphics::DrawTestTriangle()
 	vp.TopLeftX = 0;
 	vp.TopLeftY = 0;
 	pContext->RSSetViewports(1u, &vp);
+
+	wrl::ComPtr<ID3D11PixelShader> pPixelShader;
+	GFX_THROW_INFO(D3DReadFileToBlob(L"PixelShader.cso", &pBlob));
+	GFX_THROW_INFO(pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(),nullptr,&pPixelShader));
+
+	pContext->PSSetShader(pPixelShader.Get(), nullptr, 0u);
+
+	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), nullptr);
 
 	GFX_THROW_INFO_ONLY(pContext->DrawIndexed((UINT)std::size(indices), 0u, 0u));
 }
