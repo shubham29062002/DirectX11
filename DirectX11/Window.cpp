@@ -2,6 +2,7 @@
 #include<sstream>
 #include"resource.h"
 #include"WindowsThrowMacros.h"
+#include "imgui/imgui_impl_win32.h"
 
 Window::WindowClass Window::WindowClass::WndClass;
 
@@ -16,9 +17,9 @@ Window::WindowClass::WindowClass() noexcept
 	wc.cbWndExtra = 0;
 	wc.hInstance = GetInstance();
 	wc.hIcon = static_cast<HICON>(LoadImage(
-		GetInstance(), 
+		GetInstance(),
 		MAKEINTRESOURCE(IDI_ICON1),
-		IMAGE_ICON,32,32,0
+		IMAGE_ICON, 32, 32, 0
 	));
 	wc.hCursor = nullptr;
 	wc.hbrBackground = nullptr;
@@ -48,7 +49,7 @@ HINSTANCE Window::WindowClass::GetInstance() noexcept
 }
 
 Window::Window(int width, int height, const char* name)
-	:width(width),height(height)
+	:width(width), height(height)
 {
 	RECT wr;
 	wr.left = 100;
@@ -73,17 +74,20 @@ Window::Window(int width, int height, const char* name)
 
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
 
-	pGfx = std::make_unique<Graphics>(hWnd,width,height);
+	ImGui_ImplWin32_Init(hWnd);
+
+	pGfx = std::make_unique<Graphics>(hWnd, width, height);
 }
 
 Window::~Window()
 {
+	ImGui_ImplWin32_Shutdown();
 	DestroyWindow(hWnd);
 }
 
 void Window::SetTitle(const std::string& title)
 {
-	if (SetWindowText(hWnd,title.c_str()) == 0)
+	if (SetWindowText(hWnd, title.c_str()) == 0)
 	{
 		throw CHWND_LAST_EXCEPT();
 	}
@@ -133,6 +137,12 @@ LRESULT CALLBACK Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 
 LRESULT CALLBACK Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+	{
+		return true;
+	}
+	const auto& imio = ImGui::GetIO();
+
 	switch (msg)
 	{
 	case WM_CLOSE:
@@ -150,69 +160,105 @@ LRESULT CALLBACK Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 	//Keybord msg
 	case WM_KEYDOWN:
 	case WM_SYSKEYDOWN:
-	{
-		if (!(lParam & 0x40000000))
+		if (imio.WantCaptureKeyboard)
 		{
-			kbd.OnKeyPressed(static_cast<unsigned char>(wParam));
+			break;
 		}
-		break;
-	}
+		{
+			if (!(lParam & 0x40000000))
+			{
+				kbd.OnKeyPressed(static_cast<unsigned char>(wParam));
+			}
+			break;
+		}
 	case WM_KEYUP:
 	case WM_SYSKEYUP:
-	{
-		kbd.OnKeyReleased(static_cast<unsigned char>(wParam));
-		break;
-	}
+		if (imio.WantCaptureKeyboard)
+		{
+			break;
+		}
+	    {
+	    	kbd.OnKeyReleased(static_cast<unsigned char>(wParam));
+	    	break;
+	    }
 	case WM_CHAR:
-	{
-		kbd.OnChar(static_cast<unsigned char>(wParam));
-		break;
-	}
-    //mouse msg
+		if (imio.WantCaptureKeyboard)
+		{
+			break;
+		}
+	    {
+	    	kbd.OnChar(static_cast<unsigned char>(wParam));
+	    	break;
+	    }
+	//mouse msg
 	case WM_MOUSEMOVE:
-	{
-		const POINTS pt = MAKEPOINTS(lParam);
-		mouse.OnMouseMove(pt.x, pt.y);
-		break;
-	}
+		if (imio.WantCaptureKeyboard)
+		{
+			break;
+		}
+	    {
+	    	const POINTS pt = MAKEPOINTS(lParam);
+	    	mouse.OnMouseMove(pt.x, pt.y);
+	    	break;
+	    }
 	case WM_LBUTTONDOWN:
-	{
-		const POINTS pt = MAKEPOINTS(lParam);
-		mouse.OnLeftPressed(pt.x, pt.y);
-		break;
-	}
+		if (imio.WantCaptureKeyboard)
+		{
+			break;
+		}
+	    {
+	    	const POINTS pt = MAKEPOINTS(lParam);
+	    	mouse.OnLeftPressed(pt.x, pt.y);
+	    	break;
+	    }
 	case WM_LBUTTONUP:
-	{
-		const POINTS pt = MAKEPOINTS(lParam);
-		mouse.OnLeftReleased(pt.x, pt.y);
-		SetForegroundWindow(hWnd);
-		break;
-	}
+		if (imio.WantCaptureKeyboard)
+		{
+			break;
+		}
+	    {
+	    	const POINTS pt = MAKEPOINTS(lParam);
+	    	mouse.OnLeftReleased(pt.x, pt.y);
+	    	SetForegroundWindow(hWnd);
+	    	break;
+	    }
 	case WM_RBUTTONDOWN:
-	{
-		const POINTS pt = MAKEPOINTS(lParam);
-		mouse.OnRightPressed(pt.x, pt.y);
-		break;
-	}
+		if (imio.WantCaptureKeyboard)
+		{
+			break;
+		}
+	    {
+	    	const POINTS pt = MAKEPOINTS(lParam);
+	    	mouse.OnRightPressed(pt.x, pt.y);
+	    	break;
+	    }
 	case WM_RBUTTONUP:
-	{
-		const POINTS pt = MAKEPOINTS(lParam);
-		mouse.OnLeftReleased(pt.x, pt.y);
-		break;
-	}
+		if (imio.WantCaptureKeyboard)
+		{
+			break;
+		}
+	    {
+	    	const POINTS pt = MAKEPOINTS(lParam);
+	    	mouse.OnLeftReleased(pt.x, pt.y);
+	    	break;
+	    }
 	case WM_MOUSEWHEEL:
-	{
-		const POINTS pt = MAKEPOINTS(lParam);
-		if (GET_WHEEL_DELTA_WPARAM(wParam) > 0)
+		if (imio.WantCaptureKeyboard)
 		{
-			mouse.OnWheelUp(pt.x, pt.y);
+			break;
 		}
-		else if (GET_WHEEL_DELTA_WPARAM(wParam) < 0)
-		{
-			mouse.OnWheelDown(pt.x, pt.y);
-		}
-		break;
-	}
+	    {
+	    	const POINTS pt = MAKEPOINTS(lParam);
+	    	if (GET_WHEEL_DELTA_WPARAM(wParam) > 0)
+	    	{
+	    		mouse.OnWheelUp(pt.x, pt.y);
+	    	}
+	    	else if (GET_WHEEL_DELTA_WPARAM(wParam) < 0)
+	    	{
+	    		mouse.OnWheelDown(pt.x, pt.y);
+	    	}
+	    	break;
+	    }
 	//Msg handling over for mouse and keyboard
 	default:
 		break;
@@ -221,7 +267,7 @@ LRESULT CALLBACK Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 }
 
 Window::HrException::HrException(int line, const char* file, HRESULT hr) noexcept
-	:Exception(line, file),hr(hr)
+	:Exception(line, file), hr(hr)
 {}
 
 const char* Window::HrException::what() const noexcept
