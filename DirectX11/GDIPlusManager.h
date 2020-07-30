@@ -10,4 +10,3 @@ private:
 	static ULONG_PTR token;
 	static int refCount;
 };
-

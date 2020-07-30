@@ -5,7 +5,6 @@
 #include<vector>
 #include<string>
 
-
 class DxgiInfoManager
 {
 public:
@@ -19,4 +18,3 @@ private:
 	unsigned long long next = 0u;
 	Microsoft::WRL::ComPtr<IDXGIInfoQueue> pDxgiInfoQueue;
 };
-

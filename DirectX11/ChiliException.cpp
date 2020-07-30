@@ -2,7 +2,7 @@
 #include<sstream>
 
 ChiliException::ChiliException(int line, const char* file) noexcept
-	:line(line),file(file)
+	:line(line), file(file)
 {
 }
 
@@ -32,7 +32,7 @@ const std::string& ChiliException::GetFile() const noexcept
 std::string ChiliException::GetOriginString() const noexcept
 {
 	std::ostringstream oss;
-	oss << " [File] " << file << std::endl 
+	oss << " [File] " << file << std::endl
 		<< " [Line] " << line;
 	return oss.str();
 }

@@ -169,7 +169,6 @@ void Surface::Save(const std::string& filename) const
 	CLSID bmpID;
 	GetEncoderClsid(L"image/bmp", &bmpID);
 
-
 	// convert filenam to wide string (for Gdiplus)
 	wchar_t wideName[512];
 	mbstowcs_s(nullptr, wideName, filename.c_str(), _TRUNCATE);
@@ -196,7 +195,6 @@ Surface::Surface(unsigned int width, unsigned int height, std::unique_ptr<Color[
 	height(height),
 	pBuffer(std::move(pBufferParam))
 {}
-
 
 // surface exception stuff
 Surface::Exception::Exception(int line, const char* file, std::string note) noexcept

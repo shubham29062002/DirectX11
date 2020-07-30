@@ -31,7 +31,7 @@ public:
 			for (int y = 0, i = 0; y < nVertices_y; y++)
 			{
 				const float y_pos = float(y) * divisionSize_y;
-				for (int x = 0; x < nVertices_x; x++,i++)
+				for (int x = 0; x < nVertices_x; x++, i++)
 				{
 					const auto v = dx::XMVectorAdd(
 						bottomLeft,

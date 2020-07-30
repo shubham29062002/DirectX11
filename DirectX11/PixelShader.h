@@ -9,4 +9,3 @@ public:
 private:
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> pPixelShader;
 };
-

@@ -15,4 +15,3 @@ private:
 	float yaw = 0.0f;
 	float roll = 0.0f;
 };
-

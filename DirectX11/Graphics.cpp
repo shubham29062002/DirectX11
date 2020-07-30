@@ -56,7 +56,7 @@ Graphics::Graphics(HWND hWnd, int width, int height)
 	));
 
 	wrl::ComPtr<ID3D11Resource> pBackBuffer;
-	GFX_THROW_INFO(pSwap->GetBuffer(0, __uuidof(ID3D11Resource),&pBackBuffer));
+	GFX_THROW_INFO(pSwap->GetBuffer(0, __uuidof(ID3D11Resource), &pBackBuffer));
 	GFX_THROW_INFO(pDevice->CreateRenderTargetView(
 		pBackBuffer.Get(),
 		nullptr,
@@ -191,7 +191,7 @@ bool Graphics::IsImguiEnabled() const noexcept
 }
 
 Graphics::HrException::HrException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs) noexcept
-	:Exception(line,file),hr(hr)
+	:Exception(line, file), hr(hr)
 {
 	for (const auto& m : infoMsgs)
 	{
@@ -254,7 +254,7 @@ const char* Graphics::DeviceRemovedException::GetType() const noexcept
 }
 
 Graphics::InfoException::InfoException(int line, const char* file, std::vector<std::string> infoMsgs) noexcept
-	:Exception(line,file)
+	:Exception(line, file)
 {
 	for (const auto& m : infoMsgs)
 	{

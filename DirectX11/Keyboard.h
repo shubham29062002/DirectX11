@@ -19,8 +19,8 @@ public:
 		Type type;
 		unsigned char code;
 	public:
-		Event(Type type,unsigned char code) noexcept
-			:type(type),code(code)
+		Event(Type type, unsigned char code) noexcept
+			:type(type), code(code)
 		{}
 		bool IsPress() const noexcept
 		{

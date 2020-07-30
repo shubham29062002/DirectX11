@@ -177,89 +177,89 @@ LRESULT CALLBACK Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 		{
 			break;
 		}
-	    {
-	    	kbd.OnKeyReleased(static_cast<unsigned char>(wParam));
-	    	break;
-	    }
+		{
+			kbd.OnKeyReleased(static_cast<unsigned char>(wParam));
+			break;
+		}
 	case WM_CHAR:
 		if (imio.WantCaptureKeyboard)
 		{
 			break;
 		}
-	    {
-	    	kbd.OnChar(static_cast<unsigned char>(wParam));
-	    	break;
-	    }
-	//mouse msg
+		{
+			kbd.OnChar(static_cast<unsigned char>(wParam));
+			break;
+		}
+		//mouse msg
 	case WM_MOUSEMOVE:
 		if (imio.WantCaptureKeyboard)
 		{
 			break;
 		}
-	    {
-	    	const POINTS pt = MAKEPOINTS(lParam);
-	    	mouse.OnMouseMove(pt.x, pt.y);
-	    	break;
-	    }
+		{
+			const POINTS pt = MAKEPOINTS(lParam);
+			mouse.OnMouseMove(pt.x, pt.y);
+			break;
+		}
 	case WM_LBUTTONDOWN:
 		if (imio.WantCaptureKeyboard)
 		{
 			break;
 		}
-	    {
-	    	const POINTS pt = MAKEPOINTS(lParam);
-	    	mouse.OnLeftPressed(pt.x, pt.y);
-	    	break;
-	    }
+		{
+			const POINTS pt = MAKEPOINTS(lParam);
+			mouse.OnLeftPressed(pt.x, pt.y);
+			break;
+		}
 	case WM_LBUTTONUP:
 		if (imio.WantCaptureKeyboard)
 		{
 			break;
 		}
-	    {
-	    	const POINTS pt = MAKEPOINTS(lParam);
-	    	mouse.OnLeftReleased(pt.x, pt.y);
-	    	SetForegroundWindow(hWnd);
-	    	break;
-	    }
+		{
+			const POINTS pt = MAKEPOINTS(lParam);
+			mouse.OnLeftReleased(pt.x, pt.y);
+			SetForegroundWindow(hWnd);
+			break;
+		}
 	case WM_RBUTTONDOWN:
 		if (imio.WantCaptureKeyboard)
 		{
 			break;
 		}
-	    {
-	    	const POINTS pt = MAKEPOINTS(lParam);
-	    	mouse.OnRightPressed(pt.x, pt.y);
-	    	break;
-	    }
+		{
+			const POINTS pt = MAKEPOINTS(lParam);
+			mouse.OnRightPressed(pt.x, pt.y);
+			break;
+		}
 	case WM_RBUTTONUP:
 		if (imio.WantCaptureKeyboard)
 		{
 			break;
 		}
-	    {
-	    	const POINTS pt = MAKEPOINTS(lParam);
-	    	mouse.OnLeftReleased(pt.x, pt.y);
-	    	break;
-	    }
+		{
+			const POINTS pt = MAKEPOINTS(lParam);
+			mouse.OnLeftReleased(pt.x, pt.y);
+			break;
+		}
 	case WM_MOUSEWHEEL:
 		if (imio.WantCaptureKeyboard)
 		{
 			break;
 		}
-	    {
-	    	const POINTS pt = MAKEPOINTS(lParam);
-	    	if (GET_WHEEL_DELTA_WPARAM(wParam) > 0)
-	    	{
-	    		mouse.OnWheelUp(pt.x, pt.y);
-	    	}
-	    	else if (GET_WHEEL_DELTA_WPARAM(wParam) < 0)
-	    	{
-	    		mouse.OnWheelDown(pt.x, pt.y);
-	    	}
-	    	break;
-	    }
-	//Msg handling over for mouse and keyboard
+		{
+			const POINTS pt = MAKEPOINTS(lParam);
+			if (GET_WHEEL_DELTA_WPARAM(wParam) > 0)
+			{
+				mouse.OnWheelUp(pt.x, pt.y);
+			}
+			else if (GET_WHEEL_DELTA_WPARAM(wParam) < 0)
+			{
+				mouse.OnWheelDown(pt.x, pt.y);
+			}
+			break;
+		}
+		//Msg handling over for mouse and keyboard
 	default:
 		break;
 	}

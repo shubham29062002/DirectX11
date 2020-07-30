@@ -13,8 +13,8 @@ public:
 	public:
 		unsigned int dword;
 	public:
-		constexpr Color() noexcept 
-			: dword() 
+		constexpr Color() noexcept
+			: dword()
 		{}
 		constexpr Color(const Color& col) noexcept
 			:dword(col.dword)
@@ -24,11 +24,11 @@ public:
 		{}
 		constexpr Color(unsigned char x, unsigned char r, unsigned char g, unsigned char b)
 			:
-			dword((x<<16u)|(r<<16u)|(g<<8u)|b)
+			dword((x << 16u) | (r << 16u) | (g << 8u) | b)
 		{}
-		constexpr Color(Color col,unsigned char x) noexcept
+		constexpr Color(Color col, unsigned char x) noexcept
 			:
-			Color((x<<24u)|col.dword)
+			Color((x << 24u) | col.dword)
 		{}
 		Color& operator=(Color color) noexcept
 		{
@@ -112,4 +112,3 @@ private:
 	unsigned int width;
 	unsigned int height;
 };
-

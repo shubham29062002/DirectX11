@@ -79,4 +79,3 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV;
 	float angle = 0.0f;
 };
-
