@@ -72,7 +72,12 @@ App::App()
 
 	Factory f(wnd.Gfx());
 	drawables.reserve(nDrawables);
-	std::generate_n(std::back_inserter(drawables), nDrawables, f);
+	//std::generate_n(std::back_inserter(drawables), nDrawables, f);
+
+	for (size_t i = 0; i < nDrawables; i++)
+	{
+		drawables.push_back(f());
+	}
 
 	const auto s = Surface::FromFile("Images\\kappa50.png");
 
